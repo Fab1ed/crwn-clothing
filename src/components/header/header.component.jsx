@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
 import { auth } from '../../firebase/firebase.utils';
 import { connect } from 'react-redux';
+import CartIcon from '../cart-icon/cart-icon.component';
+import CartDropdown from '../cart-dropdown/cart-dropdown.component';
 
-const Header = ({ currentUser }) => ( 
+const Header = ({ currentUser, hidden }) => ( 
     <div className='header'>
         <Link className='logo-container' to='/'>
             <Logo className='logo'/>
@@ -20,15 +22,18 @@ const Header = ({ currentUser }) => (
             {
                 currentUser ? 
                 <div className='option' onClick={() => auth.signOut()}>SIGN OUT</div> // div and not link since we need padding so button is clickable and bigger
-                :
+                : 
                 <Link className='option' to='/signin'>SIGN IN</Link>
             }
+            <CartIcon />
         </div>
+        {hidden ? null : <CartDropdown />}
     </div>
 )
 
-const mapStateToProps = (state) => ({//state object is top level root reducer
-    currentUser: state.user.currentUser
+const mapStateToProps = ({user: { currentUser }, cart: {hidden }})/*destructuring off the state*/ => ({//state object is top level root reducer
+    currentUser,
+    hidden
 })
 
 export default connect(mapStateToProps)(Header);
